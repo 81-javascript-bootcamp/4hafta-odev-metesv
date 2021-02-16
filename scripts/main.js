@@ -53,17 +53,25 @@ class MoviesApp {
     }
 
     fillYear(){
-        const yearArray = data.map(movie => movie.year);
-        const uniqueYears = yearArray.filter(onlyUnique);
-        uniqueYears.sort((a,b) => {
-            return a - b;
-        })
-        uniqueYears.forEach((year) => {
-            this.createYearRadio(year);
-        })
+        const yearData = data.map((item) => {
+            return item.year;
+        });
+        
+        const yearObj = yearData.reduce((acc, year) => {
+            if(year in acc){
+                acc[year] += 1;
+            } else {
+                acc[year] = 1;
+            }
+            return acc;
+        },{});
+
+        for(const year in yearObj){
+            this.createYearRadio(year, yearObj[year]);
+        }
     }
 
-    createYearRadio(year){
+    createYearRadio(year, count){
         const div = document.createElement("div");
         div.classList.add("form-check");
         const input = document.createElement("input");
@@ -74,7 +82,7 @@ class MoviesApp {
         input.value = year;
         const label = document.createElement("label");
         label.classList.add("form-check-label");
-        label.textContent = year;
+        label.textContent = `${year} (${count})`;
         div.appendChild(input);
         div.appendChild(label);
         this.$yearContainerEl.insertBefore(div, this.$yearSubmitter);
